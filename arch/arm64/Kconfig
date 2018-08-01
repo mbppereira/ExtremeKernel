@@ -1142,4 +1142,6 @@ config BOOT_INFO
 	  On embedded linux device, we try to collect more information from
 	  bootloader to kernel. eg. powerup reason.
 
+
+
 source "arch/arm64/mm/Kconfig"
