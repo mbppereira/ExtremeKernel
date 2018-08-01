@@ -493,8 +493,6 @@ static void cpufreq_interactive_timer(unsigned long data)
 		return;
 	if (!ppol->governor_enabled)
 		goto exit;
-	if (ppol->policy->min == ppol->policy->max)
-		goto rearm;
 
 	now = ktime_to_us(ktime_get());
 
@@ -1188,7 +1186,7 @@ static ssize_t show_boost(struct cpufreq_interactive_tunables *tunables,
 static ssize_t store_boost(struct cpufreq_interactive_tunables *tunables,
 			   const char *buf, size_t count)
 {
-/*	int ret;
+	int ret;
 	unsigned long val;
 
 	ret = kstrtoul(buf, 0, &val);
@@ -1205,7 +1203,7 @@ static ssize_t store_boost(struct cpufreq_interactive_tunables *tunables,
 		tunables->boostpulse_endtime = ktime_to_us(ktime_get());
 		trace_cpufreq_interactive_unboost("off");
 	}
-*/
+
 	return count;
 }
 
@@ -1830,6 +1828,8 @@ static int cpufreq_governor_interactive(struct cpufreq_policy *policy,
 		mutex_lock(&gov_lock);
 
 		freq_table = cpufreq_frequency_get_table(policy->cpu);
+		if (!tunables->hispeed_freq)
+			tunables->hispeed_freq = policy->max;
 
 		ppol = per_cpu(polinfo, policy->cpu);
 		ppol->policy = policy;
